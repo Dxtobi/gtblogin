@@ -1,13 +1,17 @@
 import {useState, useEffect} from 'react'
 import {db} from './firebase-config'
-import { collection, getDocs, collectionGroup } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import jsPDF from "jspdf";
+import {GiAndroidMask} from "react-icons/gi"
 import "jspdf-autotable";
 
 function Table() {
-    const [users, setUsers] = useState([])
-    const usersRef = collection(db, "users",)
-    
+  const [users, setUsers] = useState([])
+  const [login, setLogin] = useState("")
+  const [loged, setLoged] = useState(false)
+  const usersRef = collection(db, "users",)
+
+
   useEffect(() => {
           const created = new Date(Date.now());
           const getUsers = async () => {
@@ -48,7 +52,13 @@ function Table() {
       doc.autoTable(content);
       const nameDoc= `${Date.now()}Sporty.pdf`
       doc.save(nameDoc)
+  }
+  const checkLogin = () => {
+    if (login === "Emmie123") {
+      return setLoged(!loged)
     }
+  }
+  if(loged){
   return (
     <div className="table_list">
       <button onClick={exportPDF} className="export_btn">Download As PDF</button>
@@ -77,7 +87,19 @@ function Table() {
         </tbody>
       </table>
     </div>
-  );
+    );
+  } else {
+    return (
+      <div className='login_container_table'>
+        <GiAndroidMask size={60} className='icon-log'/>
+        <div className='login_div'>
+          
+          <input type="password" className="login" placeholder="password" value={login} onChange={(e)=>{setLogin(e.target.value)}}/>
+          <button className='login_btn_table' onClick={checkLogin}>Login</button>
+        </div>
+      </div>
+    )
+  }
 }
 
 export default Table
